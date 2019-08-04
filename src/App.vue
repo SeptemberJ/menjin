@@ -12,14 +12,14 @@ export default {
     this.getAccessToken()
   },
   methods: {
-    ConfigFn (JsapiTicket) {
+    ConfigFn (JsapiTicket, AppId) {
       var mytimestamp = (Date.parse(new Date())) / 1000
       var mynonceStr = MySha1(String(mytimestamp)).substring(0, 16)
       var mysignature = 'jsapi_ticket=' + JsapiTicket + '&noncestr=' + mynonceStr + '&timestamp=' + mytimestamp + '&url=' + window.location.href.split("#")[0]
       wx.config({
         beta: true,
         debug: false,
-        appId: 'wx9c1d6a69814e3842',
+        appId: AppId,
         timestamp: mytimestamp,
         nonceStr: mynonceStr,
         signature: MySha1(mysignature),
@@ -35,6 +35,14 @@ export default {
         console.log('ConfigFn ok')
       })
     },
+    getPZ (ticket) {
+      this.Http.get('/getWeixin', {id: 1}
+      ).then(res => {
+        this.ConfigFn(ticket, res.data.wxinfo.appid)
+      }).catch((error) => {
+        console.log(error)
+      })
+    },
     getAccessToken () {
       this.Http.get('/getAccessToken', {}
       ).then(res => {
@@ -46,7 +54,7 @@ export default {
     getTicket (acessToken) {
       this.Http.get('/getJSApiTicket', {acess_token: acessToken},
       ).then(res => {
-        this.ConfigFn(res.data.ticket)
+        this.getPZ(res.data.ticket)
       }).catch((error) => {
         console.log(error)
       })

@@ -19,7 +19,7 @@
       </van-collapse-item>
     </van-collapse> -->
     <van-row v-for="(item, idx) in applyList" :key="idx" :name="idx" style="font-size: 14px;text-align: left;border-bottom: 15px solid #efefef;padding: 10px;background: #ffffff;">
-      <van-col span="20" class="MarginT_8">来访时间：{{item.fdate}}</van-col>
+      <van-col span="20" class="MarginT_8">有效访问时间：{{item.fdateTxt}}</van-col>
       <van-col span="4" class="MarginT_8" style="text-align: right;">{{item.fstatusTxt}}</van-col>
 
       <van-col span="16" class="">
@@ -64,14 +64,21 @@ export default {
     if (this.openId) {
       this.getApplyList(this.openId)
     } else {
-      let AppId = 'wx9c1d6a69814e3842'
-      let CODE = this.getUrlParms('code')
-      let url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' + AppId + '&redirect_uri=' + encodeURIComponent('http://yzx.granity.cn/dist') + '&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect'
-      if (!CODE) {
-        window.location.href = url
-      } else {
-        this.getOpenId(CODE)
-      }
+      // 获取配置
+      this.Http.get('/getWeixin', {id: 1}
+      ).then(res => {
+        let AppId = res.data.wxinfo.appid
+        let RedirectUri = res.data.wxinfo.app_address
+        let CODE = this.getUrlParms('code')
+        let url = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' + AppId + '&redirect_uri=' + encodeURIComponent('http://' + RedirectUri + '/dist') + '&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect'
+        if (!CODE) {
+          window.location.href = url
+        } else {
+          this.getOpenId(CODE)
+        }
+      }).catch((error) => {
+        console.log(error)
+      })
     }
   },
   methods: {
@@ -96,6 +103,7 @@ export default {
       this.Http.get('/wxFkRecord', {openid: openid}
       ).then(res => {
         this.applyList = res.data.list.map(item => {
+          item.fdateTxt = item.fdate + '—' + item.fdate2
           item.fstatusTxt = item.fstatus === '0' ? '未审核' : (item.fstatus === '1' ? '同意' : '不同意')
           return item
         })

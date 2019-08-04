@@ -1,7 +1,7 @@
 <template>
   <div class="InsertVisitor">
     <van-nav-bar
-      title="访客邀请"
+      title="访客申请"
       left-text="返回"
       left-arrow
       @click-left="back"
@@ -9,8 +9,8 @@
     <van-field
       v-model="fname"
       clearable
-      label="用户名"
-      placeholder="请输入用户名"
+      label="访客姓名"
+      placeholder="请输入访客姓名"
     />
     <van-field
       v-model="fmobile"
@@ -115,7 +115,7 @@
       placeholder="请输入被访人电话"
     />
 
-    <van-button style="margin-top: 20px;" :loading="loading" type="danger" @click="apply">申 请</van-button>
+    <van-button style="margin-top: 20px;" :loading="loading" type="danger" @click="apply">提交申请</van-button>
   </div>
 </template>
 
@@ -141,8 +141,8 @@ export default {
       fname: '',
       fmobile: '',
       fdate: '',
-      ftimeS: '',
-      ftimeE: '',
+      ftimeS: '06:00',
+      ftimeE: '23:59',
       freason: '',
       area: '',
       areaId: '',
